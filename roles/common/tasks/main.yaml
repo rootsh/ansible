@@ -1,0 +1,27 @@
+---
+
+- name: Disabilitar o firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+  tags: firewall
+
+- name: Disabiltar o SELinux
+  selinux:
+    state: disabled
+  tags: selinux
+  register: selinux
+
+- name: Forçar o selinux
+  command: setenforce 0
+  when: selinux.changed
+  tags: selinux
+
+- name: Instalação de pacotes
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - epel-release
+    - vim
